@@ -7,34 +7,34 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
+
     {
       path: '/',
       name: 'home',
       component: Home,
       beforeEnter: (to, from, next) => {
-        // ...
-        // next()
-        if(Vue.ls.get('login') === true) {
+
+        if(Vue.ls.get('login') === true)
           next()
-        }
-        else {
+        else
           next('/login')
-        }
+
       }
     },
+
     {
       path: '/login',
       name: 'login',
       component: Login,
       beforeEnter: (to, from, next) => {
-        // ...
-        if(Vue.ls.get('login') === true) {
+
+        if(Vue.ls.get('login') === true)
           next(false)
-        }
-        else {
+        else
           next()
-        }
+
       }
     }
+
   ]
 })
