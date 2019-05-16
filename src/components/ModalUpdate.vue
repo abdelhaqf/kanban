@@ -62,7 +62,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="help">
         <drag-verify v-if="resetDeleteButton" @passcallback="deleteCard" :width="400"
         :height="40"
         :text="'swipe to delete'"
@@ -259,5 +259,9 @@ export default {
   word-wrap: break-word;
   border-bottom: 1px solid grey;
   padding: 4px 6px;
+}
+.help {
+  height: 38px;
+  overflow-y: hidden;
 }
 </style>
