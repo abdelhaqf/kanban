@@ -91,6 +91,7 @@ input {
   position: absolute;
   top: -1em;
 
+  color: #253858;
   background-color: #F8FAFB;
   padding: .35em;
 }
@@ -98,7 +99,7 @@ input {
 #tips {
   color: grey;
   font-size: 0.7em;
-  
+
   margin-top: 4px;
   margin-left: 4px;
 }

@@ -20,7 +20,7 @@
                 placement: 'top',
                 modifiers: { offset: { offset: '0,10px' } }
               }">
-              <div class="popper">
+              <div class="popper" style="padding: 6px;">
                 {{popovers[idx]}}
               </div>
 

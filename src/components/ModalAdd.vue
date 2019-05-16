@@ -3,26 +3,33 @@
     <div class="container">
 
       <div class="header">
-        <div>Tambah kartu</div>
-        <button @click="close">x</button>
+        <div><b>Tambah kartu</b></div>
+        <button id="btnClose" @click="close">x</button>
       </div>
 
       <div class="content">
         <table>
+
           <tr>
-            <td>title</td><td><input ref="mytitle" v-model="newCard.title"></td>
+            <td>Title</td>
+            <td><input ref="mytitle" v-model="newCard.title"></td>
           </tr>
+
           <tr>
-            <td>priority</td><td><star-rating v-model="newCard.priority" :padding="10" :border-color="'#4C3300'" :border-width="2" :show-rating="false" :star-size="25" /></td>
+            <td>Priority</td>
+            <td><star-rating v-model="newCard.priority" :padding="10" :border-color="'#4C3300'" :border-width="2" :show-rating="false" :star-size="22.5" /></td>
           </tr>
+
           <tr>
-            <td>due</td><td><datetime :input-style="{padding: '4px 6px'}" type="datetime" v-model="newCard.due"></datetime></td>
+            <td>Due</td>
+            <td><datetime :input-style="{padding: '4px 6px'}" type="datetime" v-model="newCard.due"></datetime></td>
           </tr>
+
         </table>
       </div>
 
       <div class="footer">
-        <button @click="confirmAddCard">add</button>
+        <button id="btnAdd" @click="confirmAddCard">add</button>
       </div>
 
     </div>
@@ -34,12 +41,15 @@ import StarRating from 'vue-star-rating'
 
 export default {
   name: 'modalAdd',
+
   components: {
     StarRating
   },
+
   data: () => {
     return {
       isVisible: false,
+
       newCard: {
         title: '',
         priority: 1,
@@ -47,19 +57,24 @@ export default {
         due: '',
         updates: []
       }
+
     }
   },
+
   props: ['bl'],
+
   methods: {
     close() {
       this.isVisible = false
     },
+
     open() {
       this.isVisible = true
       this.$nextTick(() => {
         this.$refs.mytitle.focus()
       })
     },
+
     confirmAddCard() {
       this.newCard.created= Date.now()
       this.newCard.updates.unshift({
@@ -80,40 +95,88 @@ export default {
         updates: []
       }
     }
+
   }
 }
 </script>
 
 <style lang="scss" scoped>
+
 .modalAdd {
   position: fixed;
-  width: 100%;
-  height: 100%;
   left: 0;
   top: 0;
+
+  width: 100%;
+  height: 100%;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
   background-color: rgba(0,0,0,0.7)
 }
+
 .container {
   background-color: white;
   min-width: 200px;
+  border-radius: 8px;
 }
-.header, .content, .footer, button, input, td {
+
+button, input, td {
   padding: 4px 6px;
 }
+
+tr {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.content {
+  padding: 8px 12px;
+  font-size: 0.9em;
+}
+
 .header {
+  color: #253858;
+}
+.header {
+  padding: 8px;
+
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid rgba(0,0,0,0.1);
   align-items: flex-end;
 }
+
 .content {
   border-bottom: 1px solid rgba(0,0,0,0.1);
 }
+
 .footer {
   display: flex;
   justify-content: flex-end;
+  padding: 8px;
 }
+
+#btnAdd {
+  border-radius: 0 0 6px 0;
+  padding: 8px 12px;
+  border-style: none;
+  background-color: #00B8D9;
+  color: white;
+}
+
+#btnClose {
+  border-radius: 0 6px 0 0;
+  border-style: none;
+  background-color: #FF5630;
+  color: white;
+}
+
+button:hover {
+  text-shadow: 0px 0px 4px rgba(255, 255, 255, 1);
+}
+
 </style>
