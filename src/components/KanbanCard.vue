@@ -1,17 +1,22 @@
 <template lang="html">
   <div @dblclick="$emit('update')"  class="kanbanCard" :class="['kanban-card', 'kanban'+kanban.priority]">
+
     <div  :class="new Date(kanban.due) < new Date()?'due passed':'due'" v-if="kanban.due">
       <timeago :datetime="kanban.due" :auto-update="60"> </timeago>
     </div>
+
     <div class="card-header">
-      <b>{{kanban.title.length>19?kanban.title.substr(0,19)+'...':kanban.title}}</b>
+      <b>{{kanban.title.length>19?kanban.title.substr(0,17)+'...':kanban.title}}</b>
     </div>
+
     <div class="card-body">
       {{kanban.updates[0].text.length>60?kanban.updates[0].text.substr(0,60)+'...':kanban.updates[0].text}}
     </div>
+
     <div class="card-footer">
       updated&nbsp<timeago :datetime="kanban.updates[0].created" :auto-update="60"> </timeago>
     </div>
+
   </div>
 </template>
 
@@ -19,11 +24,11 @@
 export default {
   name: 'kanbanCard',
   props: ['kanban']
-
 }
 </script>
 
 <style lang="scss" scoped>
+
 .kanban-card {
   position: relative;
   padding: 4px 6px;
@@ -36,16 +41,20 @@ export default {
   flex-direction: column;
   justify-content: space-between;
 }
+
 .card-header {
   word-wrap: break-word;
   color: #253858;
 }
+
 .card-body {
   flex-grow: 99;
   word-wrap: break-word;
-  font-size: .9em;
+  font-size: .8em;
   color: #253858;
+  padding-top: 6px;
 }
+
 .card-footer {
   display: flex;
   justify-content: flex-end;
@@ -81,6 +90,7 @@ export default {
   font-size: .7em;
   color: white;
 }
+
 .passed {
   background-color: rgba(grey, 0.9) !important;
 }

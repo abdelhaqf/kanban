@@ -17,7 +17,7 @@
             <td  v-if="canEditUpdate">
               <input v-model="oldCardData.title" />
             </td>
-            <td v-else style="width: 300px;word-wrap: break-word;">{{curCardData.title}}</td>
+            <td v-else style="">{{curCardData.title}}</td>
           </tr>
 
           <tr>
@@ -249,7 +249,7 @@ export default {
 
 .container {
   background-color: white;
-  min-width: 200px;
+  width: 400px;
   border-radius: 8px;
 }
 
@@ -274,6 +274,9 @@ export default {
 }
 td {
   height: 35px;
+  word-wrap: break-word;
+  white-space: normal;
+  word-break: break-all;
 }
 
 .footer {

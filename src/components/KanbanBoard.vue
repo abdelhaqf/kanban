@@ -3,12 +3,12 @@
     <div class="nav">
 
       <div class="">
-       <p-radio @change="changeDept(dept)" :value="dept" v-model="DeptSelector" v-for="dept in curUser.department" class="p-icon p-round p-smooth p-plain" color="success-o">
+       <p-radio style="font-size: 0.8em;" @change="changeDept(dept)" :value="dept" v-model="DeptSelector" v-for="dept in curUser.department" class="p-icon p-round p-smooth p-plain" color="success-o">
          <menu-icon class="icon mdi mdi-check" slot="extra" />
           {{dept}}
         </p-radio>
       </div>
-      <button @click="$parent.$parent.ds.close(); $ls.clear(); $router.push('/login')">Logout</button>
+      <button id="btnLogout" @click="$parent.$parent.ds.close(); $ls.clear(); $router.push('/login')">Logout</button>
     </div>
     <div class="kanban-container">
       <div v-for="(item,idx) in kanbanGroups" class="kanban-group" :style="{backgroundColor: colors[idx]}">
@@ -231,9 +231,20 @@ export default {
     padding: 4px 6px;
   }
 }
+// end draggable
 
 #button-add {
   padding: 2px 4px;
 }
-// end draggable
+#btnLogout {
+  border-style: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: #FF5630;
+  color: white;
+}
+button:hover {
+  text-shadow: 0px 0px 4px rgba(255, 255, 255, 1);
+}
+
 </style>
