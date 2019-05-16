@@ -129,28 +129,26 @@ button, input, td {
 
 tr {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
 }
 
 .content {
   padding: 8px 12px;
   font-size: 0.9em;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
 .header {
   color: #253858;
 }
 .header {
-  padding: 8px;
 
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
   align-items: flex-end;
-}
 
-.content {
+  padding: 8px;
   border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
@@ -161,16 +159,19 @@ tr {
 }
 
 #btnAdd {
-  border-radius: 0 0 6px 0;
-  padding: 8px 12px;
   border-style: none;
+  border-radius: 0 0 6px 0;
+
   background-color: #00B8D9;
   color: white;
+
+  padding: 8px 12px;
 }
 
 #btnClose {
   border-radius: 0 6px 0 0;
   border-style: none;
+
   background-color: #FF5630;
   color: white;
 }

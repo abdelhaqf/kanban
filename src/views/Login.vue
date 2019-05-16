@@ -3,7 +3,7 @@
 
     <div class="container">
 
-      <a id="title">Login</a>
+      <a id="title"><b>Login</b></a>
 
       <input
         v-model="user.uname"
