@@ -29,7 +29,7 @@
               </a>
             </popper>
         </div>
-        <draggable class="" v-model="kanbanGroups[idx]" v-bind="dragOptions"  group="kanban" @start="drag=true" @end="drag=false" @change="updateGroup">
+        <draggable class="mydraggable" v-model="kanbanGroups[idx]" v-bind="dragOptions"  group="kanban" @start="drag=true" @end="drag=false" @change="updateGroup">
           <KanbanCard  v-for="element in kanbanGroups[idx]" :key="element.created"
             :kanban="element"
             @update="$refs.myupdatemodal.open(element)"
@@ -207,7 +207,12 @@ export default {
   text-align: center;
   color: white;
   font-weight: bold;
+  cursor: default;
 }
+.kanban-title:hover {
+  text-shadow: 0px 0px 4px rgba(255, 255, 255, 1);
+}
+
 // draggable
 .no-move, .flip-list-move {
   transition: transform 0s;
@@ -226,6 +231,7 @@ export default {
   padding: 14px 16px;
   margin-bottom: 8px;
   align-items: center;
+  z-index: 99;
   // border-bottom: 1px solid grey;
 
   button {
@@ -249,6 +255,7 @@ export default {
   font-size: 1.5em;
   cursor: default;
 }
+
 #btnLogout {
   border-style: none;
   padding: 6px 12px;
@@ -256,8 +263,15 @@ export default {
   background-color: #FF5630;
   color: white;
 }
+
 button:hover {
   text-shadow: 0px 0px 4px rgba(255, 255, 255, 1);
 }
 
+.mydraggable {
+  min-height: 70px;
+  // background-color: #F8FAFB;
+  background-color: rgba(white, 0.1);
+  border-radius: 6px;
+}
 </style>
