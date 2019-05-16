@@ -13,7 +13,7 @@
     <div class="kanban-container">
       <div v-for="(item,idx) in kanbanGroups" class="kanban-group" :style="{backgroundColor: colors[idx]}">
         <div class="kanban-title">
-          <button id="button-add" v-if="idx=='backlog'" @click="$refs.mymodal.open();">+</button>
+          <button id="button-add" v-if="idx=='backlog'" @click="$refs.mymodal.open();"><b>+</b></button>
           <popper
               trigger="hover"
               :options="{
@@ -195,6 +195,7 @@ export default {
   padding: 4px 6px;
 }
 .kanban-group {
+  position: relative;
   background-color: grey;
   border-radius: 8px;
   margin: 2px 4px;
@@ -234,7 +235,19 @@ export default {
 // end draggable
 
 #button-add {
-  padding: 2px 4px;
+  position: absolute;
+  top: -28px;
+  left: 7px;
+
+  border-style: none;
+  border-radius: 6px 6px 0 0;
+
+  background-color: rgba(#253858, 0.7);
+  color: white;
+
+  padding: 0px 6px;
+  font-size: 1.5em;
+  cursor: default;
 }
 #btnLogout {
   border-style: none;

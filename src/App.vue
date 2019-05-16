@@ -34,7 +34,7 @@ export default {
           this.$ls.set('login', true, 60 * 60 * 1000)
           this.$router.push('/')
         }
-        
+
         else {
           console.log('gagal login!');
           this.$ls.clear()
@@ -56,6 +56,8 @@ html, body, * {
   box-sizing: border-box;
   font-family: Arial;
 }
+
+button:focus {outline:0;}
 
 body {
   background-color: #F8FAFB;
