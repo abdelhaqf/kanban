@@ -8,7 +8,7 @@
           {{dept}}
         </p-radio>
       </div>
-      <button id="btnLogout" @click="$parent.$parent.ds.close(); $ls.clear(); $router.push('/login')">Logout</button>
+      <button id="btnLogout" @click="$parent.$parent.ds.close(); $ls.clear(); $router.push('/login')"><b>Logout</b></button>
     </div>
     <div class="kanban-container">
       <div v-for="(item,idx) in kanbanGroups" class="kanban-group" :style="{backgroundColor: colors[idx]}">
@@ -20,8 +20,8 @@
                 placement: 'top',
                 modifiers: { offset: { offset: '0,10px' } }
               }">
-              <div class="popper" style="padding: 6px;">
-                {{popovers[idx]}}
+              <div class="popper" style="padding: 6px; font-size: 0.7em;">
+                <i>{{popovers[idx]}}</i>
               </div>
 
               <a slot="reference">
