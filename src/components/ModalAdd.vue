@@ -83,8 +83,9 @@ export default {
         due: ''
       })
 
-      this.bl.push(this.newCard)
-      this.$emit('save')
+      // this.bl.push(this.newCard)
+      // this.$emit('save')
+      this.$parent.dsAdd(this.newCard)
       this.close();
 
       this.newCard = {

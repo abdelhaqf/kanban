@@ -30,14 +30,14 @@
             </popper>
         </div>
         <draggable class="mydraggable" v-model="kanbanGroups[idx]" v-bind="dragOptions"  group="kanban" @start="drag=true" @end="drag=false" @change="updateGroup">
-          <KanbanCard  v-for="element in kanbanGroups[idx]" :key="element.created"
+          <KanbanCard  v-for="element in item" :key="element.id"
             :kanban="element"
             @update="$refs.myupdatemodal.open(element)"
           ></KanbanCard>
         </draggable>
       </div>
 
-      <ModalAdd ref="mymodal" @save="updateDeepstream" :bl="kanbanGroups.backlog" />
+      <ModalAdd ref="mymodal" :bl="kanbanGroups.backlog" />
       <ModalUpdate @save="updateDeepstream" @delete="deleteCard" ref="myupdatemodal" :kanbanGroups="kanbanGroups" />
 
     </div>
@@ -83,7 +83,23 @@ export default {
         this.updateDeepstream()
       }
     },
+    dsAdd(item) {
+      item.id = 'myKanbanList' + this.curUser.department[0] + this.$parent.$parent.ds.getUid()
+
+      this.$parent.$parent.ds.record.getRecord(item.id).set(item)
+
+      var grp = this.$parent.$parent.ds.record.getList('myKanbanList' + this.curUser.department[0] + 'todo')
+      grp.addEntry(item.id)
+      console.log(this.kanbanGroups);
+    },
     updateDeepstream() {
+
+      // for(var group in this.kanbanGroups) {
+      //   var grp = this.$parent.$parent.ds.record.getList('myKanbanList' + this.curUser.department[0] + group)
+      //   grp.addEntry()
+      // }
+
+
       for(var key in this.kanbanGroups) {
         this.record.set(key, this.kanbanGroups[key])
       }
@@ -154,6 +170,7 @@ export default {
       },
       // ds: dss('localhost:6020'),
       record: '',
+      list: {},
       curUser: ''
     }
   },
@@ -168,20 +185,69 @@ export default {
   mounted() {
     this.curUser =  this.$ls.get('user')
     this.DeptSelector = this.curUser.department[0]
+
     if(!this.$parent.$parent.ds) {
       this.$parent.$parent.login(this.curUser)
     }
-    this.record=this.$parent.$parent.ds.record.getRecord('myKanban'+this.curUser.department[0])
-    this.record.subscribe(v=>{
-      this.$nextTick(() => {
-        this.kanbanGroups.backlog=v.backlog
-        this.kanbanGroups.todo=v.todo
-        this.kanbanGroups.hold=v.hold
-        this.kanbanGroups.process=v.process
-        this.kanbanGroups.done=v.done
-        this.kanbanGroups.archive=v.archive
-      })
+    this.$nextTick(() => {
+
+
+
+
+      for(let group in {backlog:'',todo:'',hold:'',process:'',done:'',archive:''}) {
+        console.log('awal-'+group);
+        this.list[group] = ''
+        this.list[group] = this.$parent.$parent.ds.record.getList('myKanbanList' + this.curUser.department[0] + group)
+        var self2=this
+        this.list[group].subscribe((items)=> {
+
+          console.log('***');
+          console.log(this.kanbanGroups)
+          this.kanbanGroups[group] = []
+          console.log('tengah-'+group);
+          for(var idx in items) {
+            var rcd = this.$parent.$parent.ds.record.getRecord(items[idx])
+            rcd.subscribe(r => {
+              this.$nextTick(() => {
+                console.log(r);
+                this.kanbanGroups[group].push({
+                  id: r.id,
+                  title: r.title,
+                  priority: r.priority,
+                  due: r.due,
+                  created: r.created,
+                  updates: r.updates
+                })
+
+              })
+            },true)
+          }
+          console.log('---'+group);
+          console.log(this.kanbanGroups[group]);
+          // console.log('===');
+          // console.log(self.list);
+
+        }   )//
+        console.log('###');
+        console.log(this.kanbanGroups)
+      }
+    // })(groupz)
+
     })
+
+
+    // this.record = this.$parent.$parent.ds.record.getRecord('myKanban'+this.curUser.department[0])
+    // this.record.subscribe(v=>{
+    //   this.$nextTick(() => {
+    //     this.kanbanGroups.backlog=v.backlog
+    //     this.kanbanGroups.todo=v.todo
+    //     this.kanbanGroups.hold=v.hold
+    //     this.kanbanGroups.process=v.process
+    //     this.kanbanGroups.done=v.done
+    //     this.kanbanGroups.archive=v.archive
+    //   })
+    // })
+
   }
 }
 </script>

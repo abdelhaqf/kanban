@@ -23,7 +23,10 @@
 <script>
 export default {
   name: 'kanbanCard',
-  props: ['kanban']
+  props: ['kanban'],
+  mounted() {
+    // console.log('saya masup!');
+  }
 }
 </script>
 
