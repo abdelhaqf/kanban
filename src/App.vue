@@ -18,20 +18,23 @@ export default {
 
   methods: {
 
-    login(username, password) {
-      this.ds = dss('192.168.100.209:6020')
-      this.ds.login({username: username, password: password},(success, data)=>{
+    login(user) {
+      console.log();
+      this.ds = dss(user.serverIP+':6020')
+      this.ds.login({username: user.uname, password: user.pass},(success, data)=>{
         if(success === true) {
           console.log('login!');
-
-          var user = {
-            uname: username,
-            pass: password,
+          
+          var myUser = {
+            uname: user.uname,
+            pass: user.pass,
+            serverIP: user.serverIP,
             department: data.department
           }
 
-          this.$ls.set('user', user, 60 * 60 * 1000)
+          this.$ls.set('user', myUser, 60 * 60 * 1000)
           this.$ls.set('login', true, 60 * 60 * 1000)
+          this.$ls.set('ip', user.serverIP)
           this.$router.push('/')
         }
 

@@ -2,13 +2,13 @@
   <div class="kanbanBoard">
     <div class="nav">
 
-      <div class="">
+      <div class="departments">
        <p-radio style="font-size: 0.8em;" @change="changeDept(dept)" :value="dept" v-model="DeptSelector" v-for="dept in curUser.department" class="p-icon p-round p-smooth p-plain" color="success-o">
          <menu-icon class="icon mdi mdi-check" slot="extra" />
           {{dept}}
         </p-radio>
       </div>
-      <button id="btnLogout" @click="$parent.$parent.ds.close(); $ls.clear(); $router.push('/login')"><b>Logout</b></button>
+      <button id="btnLogout" @click="$parent.$parent.ds.close(); $ls.remove('user'); $ls.remove('login'); $router.push('/login')"><b>Logout</b></button>
     </div>
     <div class="kanban-container">
       <div v-for="(item,idx) in kanbanGroups" class="kanban-group" :style="{backgroundColor: colors[idx]}">
@@ -169,7 +169,7 @@ export default {
     this.curUser =  this.$ls.get('user')
     this.DeptSelector = this.curUser.department[0]
     if(!this.$parent.$parent.ds) {
-      this.$parent.$parent.login(this.curUser.uname, this.curUser.pass)
+      this.$parent.$parent.login(this.curUser)
     }
     this.record=this.$parent.$parent.ds.record.getRecord('myKanban'+this.curUser.department[0])
     this.record.subscribe(v=>{
@@ -223,7 +223,7 @@ export default {
 }
 .nav {
   position: fixed;
-  background-color: white;
+  background-color: rgba(#253858, 0.7);
   width: 100%;
   top: 0;
   display: flex;
@@ -248,7 +248,7 @@ export default {
   border-style: none;
   border-radius: 6px 6px 0 0;
 
-  background-color: rgba(#253858, 0.7);
+  background-color: rgba(#253858, 0.9);
   color: white;
 
   padding: 0px 6px;
@@ -273,5 +273,13 @@ button:hover {
   // background-color: #F8FAFB;
   background-color: rgba(white, 0.1);
   border-radius: 6px;
+}
+
+.departments {
+  color: white;
+  div:hover {
+    text-shadow: 0px 0px 4px rgba(255, 255, 255, 1);
+
+  }
 }
 </style>

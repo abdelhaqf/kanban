@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="login">
+  <div class="login" @keydown.esc="showSecret" tabindex="0">
 
     <div class="container">
 
@@ -17,6 +17,13 @@
         @keydown.enter="login"
         type="password"
         placeholder="password">
+
+      <input
+        v-if="secret"
+        v-model="user.serverIP"
+        ref="ip"
+        @keydown.enter="login"
+        placeholder="server IP">
 
       <a id="tips">Tekan <b>[ENTER]</b> untuk masuk</a>
     </div>
@@ -37,9 +44,11 @@ export default {
 
   data: function() {
     return {
+      secret: false,
       user: {
         uname: '',
         pass: '',
+        serverIP: '',
         department: []
       }
     }
@@ -47,8 +56,19 @@ export default {
 
   methods: {
     login() {
-      this.$parent.login(this.user.uname, this.user.pass)
-    }
+      this.$parent.login(this.user)
+    },
+    showSecret() {
+      this.secret = true
+    },
+  },
+  mounted() {
+    var ip = this.$ls.get('ip')
+    
+    if(!ip)
+      this.user.serverIP = '192.168.100.209'
+    else
+      this.user.serverIP = ip
   }
 
 }
