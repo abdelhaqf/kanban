@@ -1,0 +1,40 @@
+list.on entry added
+	getrecord
+	subscribe
+	*new
+		if(data.id)
+			data.id=x
+			push to local
+	*update
+		map
+
+on entry removed
+	getrecord
+	subscribe
+		splice local
+
+onsubmit
+	if has
+		update
+	else
+		set new
+		addentry
+
+onedit x
+onupdate
+	getrecord
+	set record
+ondelete
+	removeentry
+
+
+
+
+
+get list/record
+whenready
+do someting
+
+
+whenReady should be used to guarantee the current data for the record has been loaded before trying to read/write to it. If it's the first time the record has been requested it will wait for the server to respond with the records content, otherwise it will use the cached record state stored within the client.
+In summary, after calling .set you can be assured your document has been updated!
