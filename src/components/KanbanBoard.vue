@@ -29,7 +29,7 @@
               </a>
             </popper>
         </div>
-        <draggable class="mydraggable" v-model="kanbanGroups[idx]" v-bind="dragOptions"  group="kanban" @start="drag=true" @end="drag=false" @change="updateGroup">
+        <draggable :key="abdel"  class="mydraggable" v-model="kanbanGroups[idx]" v-bind="dragOptions"  group="kanban" @start="drag=true" @end="forceMan" @change="updateGroup">
           <KanbanCard  v-for="element in item" :key="element.id"
             :kanban="element"
             @update="$refs.myupdatemodal.open(element)"
@@ -38,7 +38,7 @@
       </div>
 
       <ModalAdd ref="mymodal" :bl="kanbanGroups.backlog" />
-      <ModalUpdate @save="updateDeepstream" @delete="deleteCard" ref="myupdatemodal" :kanbanGroups="kanbanGroups" />
+      <ModalUpdate ref="myupdatemodal" :kanbanGroups="kanbanGroups" />
 
     </div>
   </div>
@@ -58,59 +58,88 @@ export default {
   name: 'kanbanBoard',
   methods: {
     updateGroup(x) {
+      console.log(Object.keys(x)[0]);
+
       if(Object.keys(x)[0]=='added') {
-        var tmp = ''
-        for(var key in this.kanbanGroups) {
-          if(this.kanbanGroups[key].find(e => {return e == x.added.element})) {
-            tmp = key
-            this.record.set(key, this.kanbanGroups[key])
+        //remove from old place
+        for(var groupName in this.kanbanGroups) {
+          var temp = this.list[groupName].getEntries()
+          if(temp.find(e => {return e == x.added.element.id})) {
+            this.list[groupName].removeEntry(x.added.element.id)
           }
         }
 
-        this.newUpdateData = {
-          text: 'moved to '+tmp,
-          created: new Date(),
-          type: 'system'
-        }
-        x.added.element.updates.unshift(this.newUpdateData)
-        this.newUpdateData = {
-          text: '',
-          created: '',
-          type: 'normal'
+        for(var groupName in this.kanbanGroups) {
+          if(this.kanbanGroups[groupName].find(e => {return e == x.added.element})) {
+
+            this.newUpdateData = {
+              text: 'moved to '+groupName,
+              created: new Date(),
+              type: 'system'
+            }
+
+            x.added.element.updates.unshift(this.newUpdateData)
+            this.$parent.$parent.ds.record.getRecord(x.added.element.id).set(x.added.element)
+            this.list[groupName].addEntry(x.added.element.id, x.added.newIndex)
+            // this.$forceUpdate();
+
+            this.newUpdateData = {
+              text: '',
+              created: '',
+              type: 'normal'
+            }
+
+          }
         }
       }
-      else {
-        this.updateDeepstream()
+      else if(Object.keys(x)[0]=='moved'){
+        for(var groupName in this.kanbanGroups) {
+          var temp = this.list[groupName].getEntries()
+          if(temp.find(e => {return e == x.moved.element.id})) {
+            let help=temp[x.moved.oldIndex]
+            temp[x.moved.oldIndex] = temp[x.moved.newIndex]
+            temp[x.moved.newIndex] = help
+
+            this.list[groupName].setEntries(temp)
+          }
+        }
       }
+
+
+    },
+    forceMan(){
+      // this.abdel+=1
     },
     dsAdd(item) {
       item.id = 'myKanbanList' + this.curUser.department[0] + this.$parent.$parent.ds.getUid()
 
       this.$parent.$parent.ds.record.getRecord(item.id).set(item)
 
-      var grp = this.$parent.$parent.ds.record.getList('myKanbanList' + this.curUser.department[0] + 'todo')
-      grp.addEntry(item.id)
-      console.log(this.kanbanGroups);
+      this.list['backlog'].addEntry(item.id)
     },
     updateDeepstream() {
-
-      // for(var group in this.kanbanGroups) {
-      //   var grp = this.$parent.$parent.ds.record.getList('myKanbanList' + this.curUser.department[0] + group)
-      //   grp.addEntry()
+      // for(var key in this.kanbanGroups) {
+      //   this.record.set(key, this.kanbanGroups[key])
       // }
-
-
-      for(var key in this.kanbanGroups) {
-        this.record.set(key, this.kanbanGroups[key])
+    },
+    dsUpdate(item, update) {
+      item.updates.unshift(update)
+      for(var groupName in this.kanbanGroups) {
+        var temp = this.list[groupName].getEntries()
+        if(temp.find(e => {return e == item.id})) {
+          this.$parent.$parent.ds.record.getRecord(item.id).set(item)
+        }
       }
     },
-    deleteCard(x) {
-      for(var key in this.kanbanGroups) {
-        this.kanbanGroups[key] = this.kanbanGroups[key].filter((val, idx, arr) => {
-          return val != x
-        })
+    dsDelete(item) {
+      for(var groupName in this.kanbanGroups) {
+        if(this.kanbanGroups[groupName].find(e => {return e == item})){
+          this.list[groupName].removeEntry(item.id)
+          console.log(groupName);
+          console.log(item.id);
+        }
       }
-      this.updateDeepstream()
+
     },
     changeDept(x) {
       console.log(x);
@@ -138,7 +167,7 @@ export default {
   },
   data: function() {
     return {
-      abdel: '',
+      abdel: 0,
       newUpdateData: {
         text: '',
         created: '',
@@ -192,46 +221,64 @@ export default {
     this.$nextTick(() => {
 
 
-
-
-      for(let group in {backlog:'',todo:'',hold:'',process:'',done:'',archive:''}) {
-        console.log('awal-'+group);
-        this.list[group] = ''
+      for(let group in this.kanbanGroups) {
         this.list[group] = this.$parent.$parent.ds.record.getList('myKanbanList' + this.curUser.department[0] + group)
-        var self2=this
         this.list[group].subscribe((items)=> {
-
-          console.log('***');
-          console.log(this.kanbanGroups)
           this.kanbanGroups[group] = []
-          console.log('tengah-'+group);
+
           for(var idx in items) {
             var rcd = this.$parent.$parent.ds.record.getRecord(items[idx])
-            rcd.subscribe(r => {
+
+            rcd.subscribe(r => {console.log();
               this.$nextTick(() => {
-                console.log(r);
-                this.kanbanGroups[group].push({
-                  id: r.id,
-                  title: r.title,
-                  priority: r.priority,
-                  due: r.due,
-                  created: r.created,
-                  updates: r.updates
-                })
+                var ada = false
+                for(var groupName in this.kanbanGroups) {
+                  if(this.kanbanGroups[groupName].find(e => {return e.id == r.id})) {
+                    ada = true
+                  }
+                }
+                if(ada) {
+                  this.kanbanGroups[group][idx]= {
+                    id: r.id,
+                    title: r.title,
+                    priority: r.priority,
+                    due: r.due,
+                    created: r.created,
+                    updates: r.updates
+                  }
+                  this.$forceUpdate();
+                  this.forceMan()
+                }
+                else {
+                  this.kanbanGroups[group].push({
+                    id: r.id,
+                    title: r.title,
+                    priority: r.priority,
+                    due: r.due,
+                    created: r.created,
+                    updates: r.updates
+                  })
+                  this.forceMan()
+                  this.$forceUpdate();
+
+                  // this.$forceUpdate();
+
+                }
 
               })
+              this.$forceUpdate();
+
+              this.forceMan()
+
             },true)
           }
-          console.log('---'+group);
-          console.log(this.kanbanGroups[group]);
-          // console.log('===');
-          // console.log(self.list);
 
-        }   )//
-        console.log('###');
-        console.log(this.kanbanGroups)
+        })
+        this.$forceUpdate();
+        
+        this.forceMan()
+
       }
-    // })(groupz)
 
     })
 

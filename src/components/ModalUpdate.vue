@@ -202,8 +202,9 @@ export default {
       this.curCardData = this.findCard(this.curCardData)
       for(var k in this.curCardData) this.oldCardData[k]=this.curCardData[k];
       this.newUpdateData.created = new Date()
-      this.curCardData.updates.unshift(this.newUpdateData)
-      this.$emit('save')
+      // this.curCardData.updates.unshift(this.newUpdateData)
+      // this.$emit('save')
+      this.$parent.dsUpdate(this.curCardData, this.newUpdateData)
 
       this.newUpdateData = {
         text: '',
@@ -217,9 +218,9 @@ export default {
       this.curCardData = this.findCard(this.curCardData)
       setTimeout(() => {
         this.close()
-        this.$emit('delete',this.curCardData)
+        // this.$emit('delete',this.curCardData)
+        this.$parent.dsDelete(this.curCardData)
         this.resetDeleteButton = false
-
       }, 500);
     },
 
