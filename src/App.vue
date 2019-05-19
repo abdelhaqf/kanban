@@ -15,7 +15,6 @@
     },
     methods: {
       login(user) {
-        console.log()
         this.ds = dss(user.serverIP + ':6020')
         this.ds.login({ username: user.uname, password: user.pass }, (success, data) => {
           if (success === true) {

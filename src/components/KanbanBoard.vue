@@ -14,24 +14,24 @@
         </p-radio>
       </div>
       <button id="btnLogout" @click="$parent.$parent.ds.close(); $ls.remove('user'); $ls.remove('login'); $router.push('/login')">
-                            <b>Logout</b>
-                          </button>
+                                          <b>Logout</b>
+                                        </button>
     </div>
     <div class="kanban-container">
       <div v-for="(item,idx) in kanbanGroups" class="kanban-group" :style="{backgroundColor: colors[idx]}">
         <div class="kanban-title">
           <button id="button-add" v-if="idx=='backlog'" @click="$refs.mymodal.open();"><b>+</b></button>
           <popper trigger="hover" :options="{
-                                  placement: 'top',
-                                  modifiers: { offset: { offset: '0,10px' } }
-                                }">
+                                                placement: 'top',
+                                                modifiers: { offset: { offset: '0,10px' } }
+                                              }">
             <div class="popper" style="padding: 6px; font-size: 0.7em;">
               <i>{{popovers[idx]}}</i>
             </div>
 
             <a slot="reference">
-                                  {{idx}}
-                                </a>
+                                                {{idx}}
+                                              </a>
           </popper>
         </div>
         <draggable class="mydraggable"
@@ -87,6 +87,11 @@
         } else {
           this.updateDeepstream()
         }
+      },
+      dsAdd(item) {
+        var record = this.$parent.$parent.ds.record.getRecord('myKanbanRecord' + this.curUser.department[0] + 'backlog' + this.$parent.$parent.ds.getUid())
+        record.set(item)
+        this.list['backlog'].addEntry(record.name)
       },
       updateDeepstream() {
         for (var key in this.kanbanGroups) {
@@ -151,6 +156,7 @@
           archive: 'tugas yang sudah selesai di bulan sebelumnya'
         },
         record: '',
+        list: {},
         curUser: ''
       }
     },
@@ -168,17 +174,55 @@
       if (!this.$parent.$parent.ds) {
         this.$parent.$parent.login(this.curUser)
       }
-      this.record = this.$parent.$parent.ds.record.getRecord('myKanban' + this.curUser.department[0])
-      this.record.subscribe(v => {
-        this.$nextTick(() => {
-          this.kanbanGroups.backlog = v.backlog
-          this.kanbanGroups.todo = v.todo
-          this.kanbanGroups.hold = v.hold
-          this.kanbanGroups.process = v.process
-          this.kanbanGroups.done = v.done
-          this.kanbanGroups.archive = v.archive
+
+      for (let group in this.kanbanGroups) {
+        this.list[group] = this.$parent.$parent.ds.record.getList('myKanbanList' + this.curUser.department[0] + group)
+        this.list[group].whenReady(list => {
+          for(let ldata in list) {
+            console.log('ldata: '+ldata);
+            this.$parent.$parent.ds.record.getRecord(ldata).whenReady(rec => {
+              this.kanbanGroups[group].push(rec)
+            })
+          }
+          // list.on('entry-added', (l,idx) => {
+          //   console.log('entry added!')
+          //   // for (let ldata in l) {
+          //     console.log(l)
+          //     var rec = this.$parent.$parent.ds.record.getRecord(l)
+          //     rec.whenReady(rtemp => {
+          //       rtemp.subscribe(record => {
+          //         if (!record.id) {
+          //           console.log('new entry')
+          //           console.log(record);
+          //           record.id=record.name
+          //           this.kanbanGroups[group].push(record)
+          //         } else {
+          //           this.kanbanGroups[group] = this.kanbanGroups[group].map(b => {
+          //             if (record.id == b.id) {
+          //               b = record
+          //             }
+          //             console.log(b)
+          //             return b
+          //           })
+          //         }
+          //       })
+          //     })
+          //   // }
+          // })
         })
-      })
+      }
+
+      // this.record = this.$parent.$parent.ds.record.getRecord('myKanban' + this.curUser.department[0])
+      // this.record.subscribe(v => {
+      //   this.$nextTick(() => {
+      //     this.kanbanGroups.backlog = v.backlog
+      //     this.kanbanGroups.todo = v.todo
+      //     this.kanbanGroups.hold = v.hold
+      //     this.kanbanGroups.process = v.process
+      //     this.kanbanGroups.done = v.done
+      //     this.kanbanGroups.archive = v.archive
+      //   })
+      // })
     }
   }
 

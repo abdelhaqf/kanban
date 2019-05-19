@@ -65,8 +65,9 @@
       confirmAddCard() {
         this.newCard.created = Date.now()
         this.newCard.updates.unshift({ text: 'created', created: Date.now(), due: '' })
-        this.bl.push(this.newCard)
-        this.$emit('save')
+        // this.bl.push(this.newCard)
+        // this.$emit('save')
+        this.$parent.dsAdd(this.newCard)
         this.close()
         this.newCard = { title: '', priority: 1, created: '', due: '', updates: [] }
       }
